@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32" fill="none">
+  <!-- Dark container background with subtle border -->
+  <rect width="32" height="32" rx="7" fill="#09090b" />
+  <rect x="0.75" y="0.75" width="30.5" height="30.5" rx="6.25" stroke="#27272a" stroke-width="1.5" />
+
+  <!-- Dossier / Folder Silhouette -->
+  <path
+    d="M7 11C7 9.89543 7.89543 9 9 9H13.2L15.2 11.2H23C24.1046 11.2 25 12.0954 25 13.2V22C25 23.1046 24.1046 24 23 24H9C7.89543 24 7 23.1046 7 22V11Z"
+    fill="#18181b"
+    stroke="#52525b"
+    stroke-width="1.4"
+    stroke-linejoin="round"
+  />
+
+  <!-- Radar Recon Rings -->
+  <circle cx="16" cy="17.8" r="4.2" stroke="#10b981" stroke-width="1" stroke-opacity="0.5" stroke-dasharray="2 1.5" />
+  <!-- Glowing Center Pulse Core -->
+  <circle cx="16" cy="17.8" r="2" fill="#10b981" />
+</svg>

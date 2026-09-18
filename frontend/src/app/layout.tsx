@@ -2,9 +2,14 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "DossierAI — Account Intelligence & Trigger-Based Outbound Engine",
+  title: "Dossier AI",
   description:
     "Autonomous B2B sales reconnaissance and multi-channel trigger-first cold outbound engine for commercial real-world sales teams.",
+  icons: {
+    icon: "/icon.svg",
+    shortcut: "/icon.svg",
+    apple: "/icon.svg",
+  },
 };
 
 export default function RootLayout({
