@@ -46,7 +46,7 @@ dossier-ai/
 │   │   │   └── prompts.py        # Trigger-first system prompt & guidelines
 │   │   ├── main.py               # FastAPI application (/api/generate-dossier, /api/presets, /api/health)
 │   │   └── schemas.py            # Pydantic data contracts
-│   ├── .env                      # API keys (GOOGLE_API_KEY / GEMINI_API_KEY)
+│   ├── .env                      # API keys (OPENROUTER_API_KEY with DeepSeek free models)
 │   └── requirements.txt
 ├── frontend/
 │   ├── src/
@@ -95,5 +95,5 @@ Open `http://localhost:3000` to access the DossierAI workspace.
 ---
 
 <div align="center">
-Built by <b>Cadence Labs</b> // Day 17 Build-in-Public
+Built by <b>Kamran Khan</b>
 </div>
