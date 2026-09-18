@@ -1,30 +1,35 @@
 # 📁 DossierAI — Autonomous Account Intelligence & Trigger-Based Outbound Engine
 
-> **Autonomous AI Agent for Sales Professionals, Agency Founders, & Service Providers.**  
-> Transforms raw business domains into **Executive Account Dossiers**, **Verified Growth Trigger Signals**, and **Multi-Channel Cold Outreach Suites** in seconds.
+> **Autonomous AI Agent for Sales Professionals, Agency Founders, & Enterprise Outbound Teams.**  
+> Transforms raw commercial domains into **Executive Account Dossiers**, **Verified Growth Trigger Signals**, **Multi-Channel Cold Outreach Suites**, and **Objection Battlecards** in seconds.
 
 ---
 
 ## 🌟 The Problem DossierAI Solves
 
-In commercial sales (logistics, commercial contracting, healthcare clinics, staffing, accounting, and B2B services), sales reps suffer from **The Research Tax**:
-* Spending **20–30 minutes per account** opening 6 browser tabs (website, job boards, press releases) to find a genuine hook.
-* Generic AI cold emails (*"Hope you are having a great week! Saw you are a leader..."*) get deleted or flagged as spam.
-* The only outreach that converts at 10%–20% today is **Trigger-First Outreach** based on observable, verified business events (hiring surges, regional expansions, operational bottlenecks).
+In commercial B2B sales (logistics, commercial contracting, healthcare clinics, staffing, accounting, and professional services), sales reps suffer from **The Research Tax**:
+* Spending **20–30 minutes per account** opening 5+ browser tabs (website, job boards, press releases) just to find a genuine conversation hook.
+* Generic AI cold emails (*"Hope this finds you well! I was impressed by your company..."*) get immediately deleted or marked as spam.
+* The only outreach that consistently converts at 10%–20% today is **Trigger-First Outreach** based on observable, verified business events (hiring surges, facility expansions, operational friction).
 
 ---
 
 ## ⚡ Key Capabilities
 
-* **🔍 Autonomous Web & Signal Recon**: Asynchronously crawls target company websites, meta headers, services, and team DNA.
-* **🎯 Career & Growth Signal Mining**: Scans `/careers` and job boards to detect internal team bottlenecks and active expansion initiatives.
-* **📑 1-Page Executive Account Dossier**: Synthesizes company profile, target market, estimated scale, and operational gaps.
-* **✉️ Multi-Channel Outreach Suite**:
-  * **Trigger-First Cold Email**: 3–4 tight sentences leading with verified observations.
-  * **LinkedIn Connection Hook**: Sub-300 character high-conversion message.
-  * **15-Second Phone Opener**: Pattern interrupt script for cold calling.
-* **🛡️ Pre-Call Objection Battlecard Playbook**: Predicts the top 3 objections this specific business will raise and provides 1% closer reframe talk tracks.
-* **🖨️ 1-Page PDF / Print Brief**: Generates an executive briefing layout ready for download or team handoff.
+* **🔍 Autonomous Web & Signal Recon**: Asynchronously crawls target company websites, meta headers, service portfolios, and operating footprint.
+* **🎯 Career & Growth Signal Mining**: Scans `/careers` and public postings to detect internal bottlenecks and active hiring surges.
+* **📑 1-Page Executive Account Dossier**: Synthesizes company profile, target market, estimated headcount, and operational gaps.
+* **✉️ Multi-Channel Trigger-First Outreach Suite**:
+  * **Cold Email**: Short, lowercase high-open subject lines and 3-sentence body leading with verified observations (sub-100 words).
+  * **LinkedIn Connection Hook**: Sub-300 character high-conversion note.
+  * **15-Second Phone Opener**: Pattern-interrupt script for cold calling.
+* **🛡️ Pre-Call Objection Battlecard Playbook**: Diagnoses the top 3 subconscious objections the prospect will raise and provides the 1% closer reframe talk track.
+* **🖨️ 1-Page PDF / Print Export**: Executive briefing layout ready for instant PDF export and CRM handoff.
+* **⚡ 4 Turnkey Commercial Presets**:
+  1. **Apex Global Logistics** (Freight & Fleet — Dallas, TX)
+  2. **Summit Dental & Facial Aesthetics** (High-Ticket Medical — Scottsdale, AZ)
+  3. **Vanguard Commercial Roofing** (Commercial Construction — Austin, TX)
+  4. **Heritage Advisory & CPA Partners** (Accounting & Legal — Chicago, IL)
 
 ---
 
@@ -35,47 +40,60 @@ dossier-ai/
 ├── backend/
 │   ├── app/
 │   │   ├── agent/
-│   │   │   ├── graph.py          # LangGraph multi-agent state machine
-│   │   │   ├── nodes.py          # Recon, Signal Miner, Synthesizer nodes
-│   │   │   ├── presets.py        # 4 real-world non-tech industry demo presets
-│   │   │   └── prompts.py        # Structured Pydantic extraction prompts
-│   │   ├── main.py               # FastAPI application & endpoints
+│   │   │   ├── graph.py          # LangGraph state machine & synthesis
+│   │   │   ├── recon.py          # Asynchronous web crawler & DOM text extractor
+│   │   │   ├── presets.py        # 4 turnkey non-tech commercial presets
+│   │   │   └── prompts.py        # Trigger-first system prompt & guidelines
+│   │   ├── main.py               # FastAPI application (/api/generate-dossier, /api/presets, /api/health)
 │   │   └── schemas.py            # Pydantic data contracts
+│   ├── .env                      # API keys (GOOGLE_API_KEY / GEMINI_API_KEY)
 │   └── requirements.txt
 ├── frontend/
-│   ├── app/
+│   ├── src/
+│   │   ├── app/
+│   │   │   ├── layout.tsx        # Next.js 15 App Router root layout
+│   │   │   ├── page.tsx          # Split-panel workspace
+│   │   │   └── globals.css       # Tailwind & print export styles
 │   │   ├── components/
-│   │   │   ├── DossierView.tsx   # Executive Dossier & Trigger badges
-│   │   │   ├── OutreachView.tsx  # Multi-channel copy suite
-│   │   │   ├── Battlecards.tsx   # Objection handling matrix
-│   │   │   └── Navbar.tsx        # Brand & theme toggle
-│   │   ├── layout.tsx
-│   │   └── page.tsx              # Split-panel workspace
-│   └── package.json
+│   │   │   ├── Navbar.tsx        # Developer-grade header & PDF export
+│   │   │   ├── PresetSelector.tsx# Turnkey commercial presets bar
+│   │   │   ├── InputPanel.tsx    # Recon parameters command center
+│   │   │   ├── DossierView.tsx   # Executive Dossier presentation
+│   │   │   ├── OutreachSuiteView.tsx # Cold email, LinkedIn & phone tabs
+│   │   │   ├── BattlecardsView.tsx # Objection handling playbook
+│   │   │   ├── TriggerBadge.tsx  # Monospace colored signal badges
+│   │   │   └── CopyButton.tsx    # 1-click clipboard utility
+│   │   └── types/
+│   │       └── index.ts          # TypeScript interfaces
+│   ├── package.json
+│   ├── tailwind.config.ts
+│   └── tsconfig.json
 └── README.md
 ```
 
 ---
 
-## 🚀 Quick Setup (Coming Soon)
+## 🚀 Quick Setup & Running
 
-### Backend:
+### 1. Start the Backend:
 ```bash
 cd backend
 python3 -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
 uvicorn app.main:app --reload --port 8000
 ```
+API Documentation will be live at `http://localhost:8000/docs`.
 
-### Frontend:
+### 2. Start the Frontend:
 ```bash
 cd frontend
-npm install
-npm run dev
+bun install   # or npm install
+bun dev       # or npm run dev
 ```
+Open `http://localhost:3000` to access the DossierAI workspace.
 
 ---
 
 <div align="center">
-Built as part of <b>Cadence Labs</b>.
+Built by <b>Cadence Labs</b> // Day 17 Build-in-Public
 </div>
