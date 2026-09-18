@@ -161,16 +161,16 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-zinc-950 text-zinc-100">
+    <div className="min-h-screen flex flex-col bg-zinc-950 text-zinc-100 print:bg-white print:text-black print:min-h-0">
       <Navbar onPrint={handlePrint} hasData={!!dossierData} />
 
-      <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 py-6 sm:py-8 space-y-6">
+      <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 py-6 sm:py-8 space-y-6 print:p-0 print:m-0 print:max-w-none print:w-full print:space-y-3">
         {/* Hero Pitch Banner */}
-        <div className="border border-zinc-800/80 rounded-2xl bg-gradient-to-b from-zinc-900/60 to-zinc-950 p-6 sm:p-8 relative overflow-hidden">
+        <div className="no-print border border-zinc-800/80 rounded-2xl bg-gradient-to-b from-zinc-900/60 to-zinc-950 p-6 sm:p-8 relative overflow-hidden">
           <div className="max-w-3xl space-y-2.5">
             <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-950/60 border border-emerald-800/60 text-emerald-400 text-xs font-mono">
               <Sparkles className="w-3 h-3" />
-              <span>Day 17 Proof of Work // Commercial B2B Sales Recon</span>
+              <span>Autonomous B2B Sales Recon & Outbound Engine</span>
             </div>
             <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-zinc-100">
               Autonomous Account Intelligence & Trigger-Based Outbound
@@ -194,7 +194,7 @@ export default function Home() {
         )}
 
         {/* Split Panel Command Center */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start print:block print:w-full">
           {/* Left Column: Form Controls */}
           <div className="lg:col-span-5 space-y-4 no-print">
             <InputPanel
@@ -223,7 +223,7 @@ export default function Home() {
             <div className="p-4 rounded-xl border border-zinc-800/80 bg-zinc-900/30 text-xs font-mono text-zinc-500 space-y-2">
               <div className="flex items-center gap-2 text-zinc-400 font-semibold uppercase tracking-wider text-[10px]">
                 <Shield className="w-3.5 h-3.5 text-emerald-400" />
-                <span>The Cadence Labs Outbound Standard</span>
+                <span>The Trigger-First Outbound Standard</span>
               </div>
               <ul className="list-disc list-inside space-y-1 text-zinc-400 text-[11px]">
                 <li>Zero sycophantic fluff ("I hope this finds you well").</li>
@@ -234,7 +234,7 @@ export default function Home() {
           </div>
 
           {/* Right Column: Dossier Report */}
-          <div className="lg:col-span-7">
+          <div className="lg:col-span-7 print:w-full print:max-w-none print:m-0">
             {dossierData ? (
               <DossierView data={dossierData} />
             ) : loading ? (
@@ -262,7 +262,7 @@ export default function Home() {
 
       <footer className="border-t border-zinc-800/80 bg-zinc-950 py-6 text-center text-xs font-mono text-zinc-500 no-print">
         <p>
-          DossierAI • Built for High-Performance Commercial Outbound Teams • Cadence Labs
+          DossierAI • Built by Kamran Khan • High-Performance Commercial Outbound Engine
         </p>
       </footer>
     </div>

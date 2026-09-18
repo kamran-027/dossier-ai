@@ -9,7 +9,7 @@ interface NavbarProps {
 
 export function Navbar({ onPrint, hasData }: NavbarProps) {
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-zinc-800/80 bg-zinc-950/90 backdrop-blur-md">
+    <header className="no-print sticky top-0 z-50 w-full border-b border-zinc-800/80 bg-zinc-950/90 backdrop-blur-md">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 rounded border border-zinc-700 bg-zinc-900 flex items-center justify-center text-zinc-200 shadow-inner">
@@ -33,7 +33,7 @@ export function Navbar({ onPrint, hasData }: NavbarProps) {
 
           <div className="hidden lg:flex items-center gap-1.5 text-xs font-mono text-zinc-500 border-l border-zinc-800 pl-3">
             <Shield className="w-3.5 h-3.5 text-zinc-400" />
-            <span>Cadence Labs // Day 17</span>
+            <span>Enterprise Sales Intelligence</span>
           </div>
 
           {hasData && onPrint && (

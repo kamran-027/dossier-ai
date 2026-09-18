@@ -5,9 +5,8 @@ from datetime import datetime, timezone
 from typing import TypedDict, Optional, Dict, Any, List
 from urllib.parse import urlparse
 
+import httpx
 from dotenv import load_dotenv
-from langchain_core.messages import SystemMessage, HumanMessage
-from langchain_google_genai import ChatGoogleGenerativeAI
 from langgraph.graph import StateGraph, START, END
 
 from ..schemas import (
@@ -24,6 +23,15 @@ from .presets import PRESET_ACCOUNTS
 
 load_dotenv()
 logger = logging.getLogger("dossier-ai")
+
+OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions"
+# DeepSeek candidate models on OpenRouter (free tier priority)
+DEEPSEEK_MODELS = [
+    os.getenv("OPENROUTER_MODEL", "deepseek/deepseek-chat:free"),
+    "deepseek/deepseek-v4-flash:free",
+    "deepseek/deepseek-r1:free",
+    "deepseek/deepseek-chat",
+]
 
 
 class DossierState(TypedDict):
@@ -473,6 +481,86 @@ async def recon_node(state: DossierState) -> Dict[str, Any]:
     return {"recon_data": recon_data}
 
 
+async def call_openrouter_deepseek(
+    system_prompt: str,
+    human_prompt: str,
+    api_key: str,
+) -> Optional[DossierResponse]:
+    """Invokes OpenRouter with DeepSeek free models and parses JSON response."""
+    headers = {
+        "Authorization": f"Bearer {api_key}",
+        "HTTP-Referer": "https://dossier-ai.local",
+        "X-Title": "DossierAI Deal Recon Engine",
+        "Content-Type": "application/json",
+    }
+
+    schema_instruction = (
+        "\nYou MUST respond with ONLY a valid JSON object matching the following structure:\n"
+        "{\n"
+        '  "company_dna": {\n'
+        '    "name": "...", "domain": "...", "industry": "...", "estimated_size": "...",\n'
+        '    "headquarters": "...", "core_services": ["..."], "target_audience": "...",\n'
+        '    "executive_summary": "..."\n'
+        "  },\n"
+        '  "triggers": [\n'
+        '    {"type": "hiring|expansion|operational|reputation|tech", "headline": "...", "observation": "...", "strategic_relevance": "..."}\n'
+        "  ],\n"
+        '  "strategic_angle": "...",\n'
+        '  "outreach": {\n'
+        '    "cold_email_subjects": ["...", "...", "..."],\n'
+        '    "cold_email_body": "...",\n'
+        '    "linkedin_hook": "...",\n'
+        '    "phone_call_opener": "..."\n'
+        "  },\n"
+        '  "battlecards": [\n'
+        '    {"objection": "...", "psychological_root": "...", "reframe_response": "..."}\n'
+        "  ],\n"
+        f'  "generated_at": "{datetime.now(timezone.utc).isoformat()}"\n'
+        "}\n"
+        "Do NOT include markdown fences, backticks, or text before or after the JSON."
+    )
+
+    full_system_prompt = system_prompt + schema_instruction
+
+    async with httpx.AsyncClient(timeout=35.0) as client:
+        for model in DEEPSEEK_MODELS:
+            payload = {
+                "model": model,
+                "messages": [
+                    {"role": "system", "content": full_system_prompt},
+                    {"role": "user", "content": human_prompt},
+                ],
+                "temperature": 0.2,
+                "response_format": {"type": "json_object"},
+            }
+
+            try:
+                logger.info(f"Invoking OpenRouter model: {model}")
+                resp = await client.post(OPENROUTER_API_URL, headers=headers, json=payload)
+                if resp.status_code == 200:
+                    data = resp.json()
+                    content = data["choices"][0]["message"]["content"].strip()
+                    # Clean out any stray markdown if present
+                    if content.startswith("```"):
+                        lines = content.splitlines()
+                        if lines[0].startswith("```"):
+                            lines = lines[1:]
+                        if lines and lines[-1].startswith("```"):
+                            lines = lines[:-1]
+                        content = "\n".join(lines).strip()
+                    parsed = json.loads(content)
+                    if "generated_at" not in parsed:
+                        parsed["generated_at"] = datetime.now(timezone.utc).isoformat()
+                    return DossierResponse(**parsed)
+                else:
+                    logger.warning(f"OpenRouter {model} returned {resp.status_code}: {resp.text[:200]}")
+            except Exception as e:
+                logger.warning(f"OpenRouter error on {model}: {e}")
+                continue
+
+    return None
+
+
 async def synthesize_node(state: DossierState) -> Dict[str, Any]:
     company_url = state["company_url"]
     prospect_name = state.get("prospect_name")
@@ -481,14 +569,7 @@ async def synthesize_node(state: DossierState) -> Dict[str, Any]:
     target_industry = state.get("target_industry")
     recon = state.get("recon_data") or {}
 
-    api_key = os.getenv("GOOGLE_API_KEY") or os.getenv("GEMINI_API_KEY")
-    
-    if not api_key:
-        logger.warning("No Gemini API key found, generating deterministic intelligence dossier.")
-        fallback = create_fallback_dossier(
-            company_url, my_offering, prospect_name, prospect_role, target_industry, recon
-        )
-        return {"dossier_response": fallback}
+    api_key = os.getenv("OPENROUTER_API_KEY")
 
     human_prompt = (
         "TARGET COMPANY INTELLIGENCE DOSSIER REQUEST:\n"
@@ -505,35 +586,20 @@ async def synthesize_node(state: DossierState) -> Dict[str, Any]:
         "- Career / Growth Signals:\n"
         f"{recon.get('career_signals', 'No career page scraped.')[:1000]}\n\n"
         "TASK:\n"
-        "Produce a complete DossierResponse conforming strictly to the schema.\n"
+        "Produce a complete DossierResponse conforming strictly to the JSON schema.\n"
         "Remember: Zero generic AI fluff, trigger-first structure, commercial real-world grounding, 3 psychological objection battlecards.\n"
-        "Set generated_at to current UTC ISO timestamp.\n"
     )
 
-    candidate_models = ["gemini-3.6-flash"]
     dossier_res = None
-
-    for model_name in candidate_models:
-        try:
-            llm = ChatGoogleGenerativeAI(
-                model=model_name,
-                temperature=0.2,
-                max_retries=1,
-                api_key=api_key,
-            )
-            structured_llm = llm.with_structured_output(DossierResponse)
-            dossier_res = await structured_llm.ainvoke([
-                SystemMessage(content=DOSSIER_SYSTEM_PROMPT),
-                HumanMessage(content=human_prompt),
-            ])
-            if dossier_res and isinstance(dossier_res, DossierResponse):
-                break
-        except Exception as err:
-            logger.info(f"Model {model_name} invocation note: {err}")
-            continue
+    if api_key:
+        dossier_res = await call_openrouter_deepseek(
+            system_prompt=DOSSIER_SYSTEM_PROMPT,
+            human_prompt=human_prompt,
+            api_key=api_key,
+        )
 
     if not dossier_res:
-        logger.info("Falling back to deterministic intelligence dossier.")
+        logger.info("Using deterministic commercial intelligence fallback engine.")
         dossier_res = create_fallback_dossier(
             company_url, my_offering, prospect_name, prospect_role, target_industry, recon
         )
